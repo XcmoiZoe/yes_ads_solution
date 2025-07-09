@@ -206,26 +206,35 @@ class HomePage extends StatelessWidget {
           ),
         ),
       ),
-bottomNavigationBar: Container(
-  decoration: const BoxDecoration(
-    color: Colors.orange, // Solid orange background
-  ),
-  child: BottomNavigationBar(
-    type: BottomNavigationBarType.fixed,
-    backgroundColor: Colors.transparent, // Transparent to show Container color
-    elevation: 0,
-    selectedItemColor: Colors.white,
-    unselectedItemColor: Colors.white70,
-    items: const [
-      BottomNavigationBarItem(icon: Icon(Icons.bar_chart), label: ''),
-      BottomNavigationBarItem(icon: Icon(Icons.ad_units), label: ''),
-      BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-      BottomNavigationBarItem(icon: Icon(Icons.notifications), label: ''),
-      BottomNavigationBarItem(icon: Icon(Icons.person), label: ''),
-    ],
+bottomNavigationBar: Padding(
+  padding: const EdgeInsets.all(16),
+  child: Container(
+    height: 60,
+    decoration: BoxDecoration(
+      color: Color(0xFFF7C0ED7),
+      borderRadius: BorderRadius.circular(30),
+    ),
+    child: ClipRRect(
+      borderRadius: BorderRadius.circular(30),
+      child: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        selectedItemColor: Colors.white,
+        unselectedItemColor: Colors.white70,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.mail_outline), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.receipt_long_outlined), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.notifications_none_outlined), label: ''),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ''),
+        ],
+      ),
+    ),
   ),
 ),
-
     );
   }
 }
