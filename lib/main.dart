@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'splash_page.dart';
+import 'splash_page.dart'; // Ensure this file exists
 
 void main() {
-  runApp(YesAdsSolutionApp());
+  runApp(const YesAdsSolutionApp());
 }
 
 class YesAdsSolutionApp extends StatelessWidget {
+  const YesAdsSolutionApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
