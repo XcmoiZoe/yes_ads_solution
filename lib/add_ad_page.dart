@@ -126,7 +126,16 @@ class _AddAdPageState extends State<AddAdPage> {
                 ],
                 onChanged: (value) => setState(() => _adType = value!),
                 decoration: const InputDecoration(labelText: "Select Ad Type"),
-              ),
+              ), const SizedBox(height: 20),
+            ElevatedButton.icon(
+            icon: const Icon(Icons.upload_file),
+            label: Text("Upload $_adType Ad (placeholder)"),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text("$_adType upload coming soon")),
+              );
+            },
+          ),
 
               const SizedBox(height: 20),
               const Text("Target Locations", style: TextStyle(fontWeight: FontWeight.bold)),
@@ -237,17 +246,17 @@ class _AddAdPageState extends State<AddAdPage> {
                 onChanged: (value) => setState(() => _paymentMethod = value!),
               ),
 
-              const SizedBox(height: 20),
+           
+ const SizedBox(height: 20),
             ElevatedButton.icon(
             icon: const Icon(Icons.upload_file),
-            label: Text("Upload $_adType Ad (placeholder)"),
+            label: Text("Upload Screenshot"),
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text("$_adType upload coming soon")),
+                SnackBar(content: Text("Screenshot upload coming soon")),
               );
             },
           ),
-
 
               const SizedBox(height: 30),
               ElevatedButton(
