@@ -3,10 +3,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'add_ad_page.dart';
 import 'auth_page.dart';
+import 'list_of_ads.dart';
 
 class HomePage extends StatefulWidget {
   final String username;
-
   const HomePage({super.key, required this.username});
 
   @override
@@ -15,6 +15,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _selectedRange = 'Weekly';
+  int _selectedIndex = 2;
 
   final List<String> ads = [
     'Good Life Video Ads',
@@ -34,14 +35,40 @@ class _HomePageState extends State<HomePage> {
     'Nov. 22, 2025',
   ];
 
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  BottomNavigationBarItem _buildBottomNavItem(IconData icon, int index) {
+    return BottomNavigationBarItem(
+      icon: Container(
+        padding: const EdgeInsets.all(6),
+        margin: const EdgeInsets.only(bottom: 4),
+        child: Icon(icon, size: 24),
+      ),
+      activeIcon: Container(
+        padding: const EdgeInsets.all(6),
+        margin: const EdgeInsets.only(bottom: 4),
+        decoration: BoxDecoration(
+          color: Colors.orange,
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 24, color: Colors.white),
+      ),
+      label: '',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: SingleChildScrollView(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -66,20 +93,20 @@ class _HomePageState extends State<HomePage> {
                       onPressed: () {
                         Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => AuthPage()),
+                          MaterialPageRoute(builder: (context) => const AuthPage()),
                           (route) => false,
                         );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                       ),
-                      child: Text("Logout"),
+                      child: const Text("Logout"),
                     ),
                   ],
                 ),
-                SizedBox(height: 24),
+
+                const SizedBox(height: 24),
 
                 // Ads Views Chart Header
                 Row(
@@ -90,9 +117,8 @@ class _HomePageState extends State<HomePage> {
                             fontSize: 16, fontWeight: FontWeight.bold)),
                     DropdownButton<String>(
                       value: _selectedRange,
-                      underline: SizedBox(),
-                      icon: Icon(Icons.arrow_drop_down,
-                          color: Colors.deepPurple),
+                      underline: const SizedBox(),
+                      icon: const Icon(Icons.arrow_drop_down, color: Colors.deepPurple),
                       style: GoogleFonts.poppins(
                         color: Colors.deepPurple,
                         fontSize: 14,
@@ -123,19 +149,13 @@ class _HomePageState extends State<HomePage> {
                           sideTitles: SideTitles(
                             showTitles: true,
                             getTitlesWidget: (value, meta) {
-                              const days = [
-                                'Sun',
-                                'Mon',
-                                'Tue',
-                                'Wed',
-                                'Thu',
-                                'Fri',
-                                'Sat'
-                              ];
+                              const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                               return Padding(
                                 padding: const EdgeInsets.only(top: 8),
-                                child: Text(days[value.toInt() % 7],
-                                    style: TextStyle(fontSize: 10)),
+                                child: Text(
+                                  days[value.toInt() % 7],
+                                  style: const TextStyle(fontSize: 10),
+                                ),
                               );
                             },
                           ),
@@ -143,8 +163,7 @@ class _HomePageState extends State<HomePage> {
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
-                            getTitlesWidget: (value, _) =>
-                                Text('${value.toInt()}'),
+                            getTitlesWidget: (value, _) => Text('${value.toInt()}'),
                           ),
                         ),
                       ),
@@ -155,66 +174,45 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.orange,
                           barWidth: 3,
                           spots: _selectedRange == 'Weekly'
-                              ? [
-                                  FlSpot(0, 50),
-                                  FlSpot(1, 90),
-                                  FlSpot(2, 70),
-                                  FlSpot(3, 130),
-                                  FlSpot(4, 200),
-                                  FlSpot(5, 100),
-                                  FlSpot(6, 100),
-                                ]
-                              : [
-                                  FlSpot(0, 250),
-                                  FlSpot(1, 280),
-                                  FlSpot(2, 300),
-                                  FlSpot(3, 320),
-                                  FlSpot(4, 350),
-                                  FlSpot(5, 370),
-                                  FlSpot(6, 390),
-                                ],
+                              ? [FlSpot(0, 50), FlSpot(1, 90), FlSpot(2, 70), FlSpot(3, 130), FlSpot(4, 200), FlSpot(5, 100), FlSpot(6, 100)]
+                              : [FlSpot(0, 250), FlSpot(1, 280), FlSpot(2, 300), FlSpot(3, 320), FlSpot(4, 350), FlSpot(5, 370), FlSpot(6, 390)],
                         ),
                       ],
                     ),
                   ),
                 ),
 
-                SizedBox(height: 24),
+                const SizedBox(height: 24),
 
                 // Ads Section
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Advertisements",
-                      style: GoogleFonts.poppins(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    Text("Advertisements",
+                        style: GoogleFonts.poppins(
+                            fontSize: 18, fontWeight: FontWeight.bold)),
                     ElevatedButton.icon(
                       onPressed: () {
                         Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => AddAdPage()),
-                        );
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const AddAdPage()));
                       },
-                      icon: Icon(Icons.add),
-                      label: Text("Add"),
+                      icon: const Icon(Icons.add),
+                      label: const Text("Add"),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.orange,
                         foregroundColor: Colors.white,
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       ),
                     ),
                   ],
                 ),
 
-                // Ad List with fixed image sizes
-               ...List.generate(ads.length, (index) {
+                // Ads List
+                ...List.generate(ads.length, (index) {
                   return Card(
-                    margin: EdgeInsets.symmetric(vertical: 8),
+                    margin: const EdgeInsets.symmetric(vertical: 8),
                     child: ListTile(
                       leading: SizedBox(
                         width: 50,
@@ -223,7 +221,7 @@ class _HomePageState extends State<HomePage> {
                           images[index],
                           fit: BoxFit.cover,
                           errorBuilder: (context, error, stackTrace) =>
-                              Icon(Icons.broken_image, size: 50),
+                              const Icon(Icons.broken_image, size: 50),
                         ),
                       ),
                       title: Text(ads[index],
@@ -234,16 +232,15 @@ class _HomePageState extends State<HomePage> {
                         onSelected: (value) {
                           switch (value) {
                             case 'view':
-                              // Navigate or show ad details
                               showDialog(
                                 context: context,
                                 builder: (context) => AlertDialog(
-                                  title: Text("Ad Details"),
+                                  title: const Text("Ad Details"),
                                   content: Text("Viewing details for: ${ads[index]}"),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.pop(context),
-                                      child: Text("Close"),
+                                      child: const Text("Close"),
                                     ),
                                   ],
                                 ),
@@ -252,9 +249,7 @@ class _HomePageState extends State<HomePage> {
                             case 'edit':
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddAdPage(), // Use your edit page
-                                ),
+                                MaterialPageRoute(builder: (context) => const AddAdPage()),
                               );
                               break;
                             case 'delete':
@@ -266,34 +261,48 @@ class _HomePageState extends State<HomePage> {
                               break;
                           }
                         },
-                        itemBuilder: (BuildContext context) => [
-                          PopupMenuItem(value: 'view', child: Text('View Page')),
-                          PopupMenuItem(value: 'edit', child: Text('Edit')),
-                          PopupMenuItem(value: 'delete', child: Text('Delete')),
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(value: 'view', child: Text('View Page')),
+                          const PopupMenuItem(value: 'edit', child: Text('Edit')),
+                          const PopupMenuItem(value: 'delete', child: Text('Delete')),
                         ],
                       ),
                     ),
                   );
                 }),
 
-
                 Center(
-                  child: Text("See all",
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => AdvertisementListPage(
+                            ads: ads,
+                            images: images,
+                            dates: dates,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Text(
+                      "See all",
                       style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w500,
-                          color: Colors.deepPurple)),
+                          fontWeight: FontWeight.w500, color: Colors.deepPurple),
+                    ),
+                  ),
                 ),
 
-                SizedBox(height: 16),
+                const SizedBox(height: 16),
 
                 // Boost Card
                 Container(
-                  padding: EdgeInsets.all(16),
-                  margin: EdgeInsets.only(bottom: 80),
+                  padding: const EdgeInsets.all(16),
+                  margin: const EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.deepPurple.shade100),
-                    color: Color(0xFFF9F5FF),
+                    color: const Color(0xFFF9F5FF),
                   ),
                   child: Row(
                     children: [
@@ -301,17 +310,16 @@ class _HomePageState extends State<HomePage> {
                         "assets/boost.png",
                         height: 40,
                         errorBuilder: (context, error, stackTrace) =>
-                            Icon(Icons.bolt, color: Colors.deepPurple),
+                            const Icon(Icons.bolt, color: Colors.deepPurple),
                       ),
-                      SizedBox(width: 12),
+                      const SizedBox(width: 12),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text("Boost ad visibility near Good Life Coffee",
                                 style: GoogleFonts.poppins(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600)),
+                                    fontSize: 14, fontWeight: FontWeight.w600)),
                             Text("Get up to 5x more views",
                                 style: GoogleFonts.poppins(fontSize: 12)),
                           ],
@@ -320,57 +328,85 @@ class _HomePageState extends State<HomePage> {
                       ElevatedButton(
                         onPressed: () {},
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFE94848),
+                          backgroundColor: const Color(0xFFE94848),
                         ),
-                        child: Text("Boost"),
-                      )
+                        child: const Text("Boost"),
+                      ),
                     ],
                   ),
                 ),
+
+                // Extra space so BottomNavBar doesn't overlap content
+                const SizedBox(height: 80),
               ],
             ),
           ),
         ),
       ),
 
-      // Bottom Navigation Bar
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Container(
-          height: 60,
-          decoration: BoxDecoration(
-            color: Color(0xFFF7C0ED7),
-            borderRadius: BorderRadius.circular(30),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(30),
-            child: BottomNavigationBar(
-              type: BottomNavigationBarType.fixed,
-              backgroundColor: Colors.transparent,
-              elevation: 0,
-              currentIndex: 2,
-              selectedItemColor: Colors.white,
-              unselectedItemColor: Colors.white70,
-              showSelectedLabels: false,
-              showUnselectedLabels: false,
-              onTap: (index) {
-                // Handle tab changes
-              },
-              items: const [
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.mail_outline), label: ''),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.receipt_long_outlined), label: ''),
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.notifications_none_outlined), label: ''),
-                BottomNavigationBarItem(
-                    icon: Icon(Icons.person_outline), label: ''),
-              ],
+   bottomNavigationBar: Container(
+  height: 80,  // Increased height to provide more space
+  decoration: BoxDecoration(
+    color: const Color(0xFF7C0ED7),
+    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+    boxShadow: [
+      BoxShadow(
+        color: Colors.black.withOpacity(0.1),
+        blurRadius: 10,
+        offset: const Offset(0, -5),
+      ),
+    ],
+  ),
+  child: ClipRRect(
+    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+    child: BottomNavigationBar(
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      currentIndex: _selectedIndex,
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.white.withOpacity(0.7),
+      showSelectedLabels: false,
+      showUnselectedLabels: false,
+      onTap: _onItemTapped,
+      selectedFontSize: 0,  // Remove any potential text space
+      unselectedFontSize: 0, // Remove any potential text space
+      items: List.generate(5, (index) {
+        final icons = [
+          Icons.mail_outline,
+          Icons.receipt_long_outlined,
+          Icons.home,
+          Icons.notifications_none_outlined,
+          Icons.person_outline,
+        ];
+        return BottomNavigationBarItem(
+          icon: Container(
+            padding: const EdgeInsets.all(6),
+            margin: const EdgeInsets.only(bottom: 4),
+            child: Icon(
+              icons[index],
+              size: 24,
             ),
           ),
-        ),
-      ),
+          activeIcon: Container(
+            padding: const EdgeInsets.all(6),
+            margin: const EdgeInsets.only(bottom: 4),
+            decoration: BoxDecoration(
+              color: Colors.orange,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              icons[index],
+              size: 24,
+              color: Colors.white,
+            ),
+          ),
+          label: '',
+        );
+      }),
+    ),
+  ),
+),
     );
   }
 }
