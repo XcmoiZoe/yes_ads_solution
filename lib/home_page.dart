@@ -4,14 +4,25 @@ import 'package:fl_chart/fl_chart.dart';
 import 'add_ad_page.dart';
 import 'auth_page.dart';
 import 'list_of_ads.dart';
-
+import 'transaction.dart';
+import 'customer_support_page.dart';
+import 'notif_page.dart';
+import 'profile.dart';
+import 'custom_bottom_nav.dart';
 class HomePage extends StatefulWidget {
   final String username;
-  const HomePage({super.key, required this.username});
+  final String email; // 👈 Add this
+
+  const HomePage({
+    super.key,
+    required this.username,
+    required this.email, // 👈 Add this
+  });
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
+
 
 class _HomePageState extends State<HomePage> {
   String _selectedRange = 'Weekly';
@@ -35,31 +46,6 @@ class _HomePageState extends State<HomePage> {
     'Nov. 22, 2025',
   ];
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  BottomNavigationBarItem _buildBottomNavItem(IconData icon, int index) {
-    return BottomNavigationBarItem(
-      icon: Container(
-        padding: const EdgeInsets.all(6),
-        margin: const EdgeInsets.only(bottom: 4),
-        child: Icon(icon, size: 24),
-      ),
-      activeIcon: Container(
-        padding: const EdgeInsets.all(6),
-        margin: const EdgeInsets.only(bottom: 4),
-        decoration: BoxDecoration(
-          color: Colors.orange,
-          shape: BoxShape.circle,
-        ),
-        child: Icon(icon, size: 24, color: Colors.white),
-      ),
-      label: '',
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -344,69 +330,14 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
 
-   bottomNavigationBar: Container(
-  height: 80,  // Increased height to provide more space
-  decoration: BoxDecoration(
-    color: const Color(0xFF7C0ED7),
-    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-    boxShadow: [
-      BoxShadow(
-        color: Colors.black.withOpacity(0.1),
-        blurRadius: 10,
-        offset: const Offset(0, -5),
-      ),
-    ],
-  ),
-  child: ClipRRect(
-    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-    child: BottomNavigationBar(
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      currentIndex: _selectedIndex,
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white.withOpacity(0.7),
-      showSelectedLabels: false,
-      showUnselectedLabels: false,
-      onTap: _onItemTapped,
-      selectedFontSize: 0,  // Remove any potential text space
-      unselectedFontSize: 0, // Remove any potential text space
-      items: List.generate(5, (index) {
-        final icons = [
-          Icons.mail_outline,
-          Icons.receipt_long_outlined,
-          Icons.home,
-          Icons.notifications_none_outlined,
-          Icons.person_outline,
-        ];
-        return BottomNavigationBarItem(
-          icon: Container(
-            padding: const EdgeInsets.all(6),
-            margin: const EdgeInsets.only(bottom: 4),
-            child: Icon(
-              icons[index],
-              size: 24,
-            ),
-          ),
-          activeIcon: Container(
-            padding: const EdgeInsets.all(6),
-            margin: const EdgeInsets.only(bottom: 4),
-            decoration: BoxDecoration(
-              color: Colors.orange,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              icons[index],
-              size: 24,
-              color: Colors.white,
-            ),
-          ),
-          label: '',
-        );
-      }),
-    ),
-  ),
+ bottomNavigationBar: CustomBottomNav(
+  currentIndex: _selectedIndex,
+  username: widget.username,
+  email: widget.email, // 👈 Add this
+  parentContext: context,
 ),
+
+
     );
   }
 }

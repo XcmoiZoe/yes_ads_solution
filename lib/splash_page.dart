@@ -17,30 +17,36 @@ class _SplashPageState extends State<SplashPage> {
     _checkAuthStatus();
   }
 
-  Future<void> _checkAuthStatus() async {
-    await Future.delayed(Duration(seconds: 2)); // simulate loading
+Future<void> _checkAuthStatus() async {
+  await Future.delayed(Duration(seconds: 2)); // simulate loading
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool? seen = prefs.getBool('seen');
-    String? username = prefs.getString('user');
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool? seen = prefs.getBool('seen');
+  String? username = prefs.getString('user');
+  String? email = prefs.getString('email'); // ✅ retrieve email
 
-    if (username != null && username.isNotEmpty) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => HomePage(username: username)),
-      );
-    } else if (seen == null || !seen) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => WelcomePage()),
-      );
-    } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => AuthPage()),
-      );
-    }
+  if (username != null && username.isNotEmpty && email != null && email.isNotEmpty) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (_) => HomePage(
+          username: username,
+          email: email, // ✅ pass email
+        ),
+      ),
+    );
+  } else if (seen == null || !seen) {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => WelcomePage()),
+    );
+  } else {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => AuthPage()),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {

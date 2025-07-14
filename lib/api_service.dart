@@ -1,33 +1,90 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+
 class ApiService {
-  static final List<Map<String, String>> _users = [
-    {"username": "admin", "password": "admin123"},
-  ];
+  static const String _baseUrl = "https://web.focad.ph/api/login_register.php";
 
-  static Future<Map<String, dynamic>> login(String username, String password) async {
-    await Future.delayed(Duration(seconds: 1)); // simulate network delay
+  /// LOGIN
+  static Future<Map<String, dynamic>> login(String email, String password) async {
+    try {
+      final response = await http.post(
+        Uri.parse(_baseUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "action": "login",
+          "email": email,
+          "password": password,
+        }),
+      );
 
-    final user = _users.firstWhere(
-      (u) => u['username'] == username && u['password'] == password,
-      orElse: () => {},
-    );
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
 
-    if (user.isNotEmpty) {
-      return {"success": true, "message": "Login successful"};
-    } else {
-      return {"success": false, "message": "Invalid username or password"};
+        if (data['success'] == true) {
+          return {
+            "success": true,
+            "username": (data['username'] != null && data['username'].toString().isNotEmpty)
+                ? data['username']
+                : email,
+            "email": data['email'],
+            "company": data['company'],
+            "industry": data['industry'],
+            "phone_number": data['phone_number'],
+          };
+        }
+
+        return {"success": false, "message": data['message'] ?? "Login failed."};
+      } else {
+        return {"success": false, "message": "Server error: ${response.statusCode}"};
+      }
+    } catch (e) {
+      return {"success": false, "message": "Failed to connect to server."};
     }
   }
 
-  static Future<Map<String, dynamic>> register(String username, String password) async {
-    await Future.delayed(Duration(seconds: 1)); // simulate delay
+  /// REGISTER
+  static Future<Map<String, dynamic>> register({
+    required String username,
+    required String email,
+    required String password,
+    required String company,
+    required String industry,
+    required String phone,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse(_baseUrl),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({
+          "action": "register",
+          "username": username,
+          "email": email,
+          "password": password,
+          "company": company,
+          "industry": industry,
+          "phone_number": phone,
+        }),
+      );
 
-    bool userExists = _users.any((u) => u['username'] == username);
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
 
-    if (userExists) {
-      return {"success": false, "message": "Username already exists"};
-    } else {
-      _users.add({"username": username, "password": password});
-      return {"success": true, "message": "Registered successfully"};
+        if (data['success'] == true) {
+          return {
+            "success": true,
+            "username": (data['username'] != null && data['username'].toString().isNotEmpty)
+                ? data['username']
+                : username,
+            "message": data['message'] ?? "Registration successful",
+          };
+        }
+
+        return {"success": false, "message": data['message'] ?? "Registration failed."};
+      } else {
+        return {"success": false, "message": "Server error: ${response.statusCode}"};
+      }
+    } catch (e) {
+      return {"success": false, "message": "Failed to connect to server."};
     }
   }
 }
