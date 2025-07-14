@@ -23,22 +23,29 @@ class ApiService {
         if (data['success'] == true) {
           return {
             "success": true,
-            "username": (data['username'] != null && data['username'].toString().isNotEmpty)
-                ? data['username']
-                : email,
-            "email": data['email'],
-            "company": data['company'],
-            "industry": data['industry'],
-            "phone_number": data['phone_number'],
+            "username": data['username']?.toString() ?? email,
+            "email": data['email']?.toString() ?? "",
+            "company": data['company']?.toString() ?? "",
+            "industry": data['industry']?.toString() ?? "",
+            "phone_number": data['phone_number']?.toString() ?? "",
+          };
+        } else {
+          return {
+            "success": false,
+            "message": data['message']?.toString() ?? "Login failed. Please try again."
           };
         }
-
-        return {"success": false, "message": data['message'] ?? "Login failed."};
       } else {
-        return {"success": false, "message": "Server error: ${response.statusCode}"};
+        return {
+          "success": false,
+          "message": "Server error: ${response.statusCode}"
+        };
       }
     } catch (e) {
-      return {"success": false, "message": "Failed to connect to server."};
+      return {
+        "success": false,
+        "message": "Connection error: ${e.toString()}"
+      };
     }
   }
 
@@ -72,19 +79,26 @@ class ApiService {
         if (data['success'] == true) {
           return {
             "success": true,
-            "username": (data['username'] != null && data['username'].toString().isNotEmpty)
-                ? data['username']
-                : username,
-            "message": data['message'] ?? "Registration successful",
+            "username": data['username']?.toString() ?? username,
+            "message": data['message']?.toString() ?? "Registration successful"
+          };
+        } else {
+          return {
+            "success": false,
+            "message": data['message']?.toString() ?? "Registration failed."
           };
         }
-
-        return {"success": false, "message": data['message'] ?? "Registration failed."};
       } else {
-        return {"success": false, "message": "Server error: ${response.statusCode}"};
+        return {
+          "success": false,
+          "message": "Server error: ${response.statusCode}"
+        };
       }
     } catch (e) {
-      return {"success": false, "message": "Failed to connect to server."};
+      return {
+        "success": false,
+        "message": "Connection error: ${e.toString()}"
+      };
     }
   }
 }
