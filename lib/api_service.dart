@@ -23,6 +23,7 @@ class ApiService {
         if (data['success'] == true) {
           return {
             "success": true,
+            "user_id": data['user_id']?.toString() ?? "",
             "username": data['username']?.toString() ?? email,
             "email": data['email']?.toString() ?? "",
             "company": data['company']?.toString() ?? "",
@@ -79,7 +80,6 @@ class ApiService {
         if (data['success'] == true) {
           return {
             "success": true,
-            "username": data['username']?.toString() ?? username,
             "message": data['message']?.toString() ?? "Registration successful"
           };
         } else {
