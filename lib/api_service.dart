@@ -2,24 +2,31 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String _baseUrl = "https://web.focad.ph/api/login_register.php";
+  static const String _baseUrl = "http://artbiglobalph.com/api/login_register.php";
+  static const Duration _timeout = Duration(seconds: 30);
 
   /// LOGIN
   static Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       final response = await http.post(
         Uri.parse(_baseUrl),
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
         body: jsonEncode({
           "action": "login",
-          "email": email,
+          "email": email.trim(),
           "password": password,
         }),
-      );
+      ).timeout(_timeout);
+
+      // Debug logging
+      print('Login Response Status: ${response.statusCode}');
+      print('Login Response Body: ${response.body}');
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
         if (data['success'] == true) {
           return {
             "success": true,
@@ -37,12 +44,22 @@ class ApiService {
           };
         }
       } else {
-        return {
-          "success": false,
-          "message": "Server error: ${response.statusCode}"
-        };
+        // Try to parse error response
+        try {
+          final errorData = jsonDecode(response.body);
+          return {
+            "success": false,
+            "message": errorData['message'] ?? "Server error: ${response.statusCode}"
+          };
+        } catch (e) {
+          return {
+            "success": false,
+            "message": "Server error: ${response.statusCode}"
+          };
+        }
       }
     } catch (e) {
+      print('Login Error: $e');
       return {
         "success": false,
         "message": "Connection error: ${e.toString()}"
@@ -62,21 +79,27 @@ class ApiService {
     try {
       final response = await http.post(
         Uri.parse(_baseUrl),
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
         body: jsonEncode({
           "action": "register",
-          "username": username,
-          "email": email,
+          "username": username.trim(),
+          "email": email.trim(),
           "password": password,
-          "company": company,
-          "industry": industry,
-          "phone_number": phone,
+          "company": company.trim(),
+          "industry": industry.trim(),
+          "phone_number": phone.trim(),
         }),
-      );
+      ).timeout(_timeout);
 
-      if (response.statusCode == 200) {
+      // Debug logging
+      print('Register Response Status: ${response.statusCode}');
+      print('Register Response Body: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
         final data = jsonDecode(response.body);
-
         if (data['success'] == true) {
           return {
             "success": true,
@@ -89,12 +112,22 @@ class ApiService {
           };
         }
       } else {
-        return {
-          "success": false,
-          "message": "Server error: ${response.statusCode}"
-        };
+        // Try to parse error response
+        try {
+          final errorData = jsonDecode(response.body);
+          return {
+            "success": false,
+            "message": errorData['message'] ?? "Server error: ${response.statusCode}"
+          };
+        } catch (e) {
+          return {
+            "success": false,
+            "message": "Server error: ${response.statusCode}"
+          };
+        }
       }
     } catch (e) {
+      print('Register Error: $e');
       return {
         "success": false,
         "message": "Connection error: ${e.toString()}"
