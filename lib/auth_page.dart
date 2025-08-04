@@ -26,7 +26,31 @@ class _AuthPageState extends State<AuthPage> {
   bool _isLoading = false;
   String _message = '';
 
-  void _submit() async {
+  String? _validateEmail(String? value) {
+    if (value == null || value.isEmpty) return 'Email is required';
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(value)) return 'Enter a valid email';
+    return null;
+  }
+
+  String? _validatePassword(String? value) {
+    if (value == null || value.isEmpty) return 'Password is required';
+    if (value.length < 8) return 'Min 8 characters required';
+    final pattern = RegExp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$');
+    if (!pattern.hasMatch(value)) {
+      return 'Use letters and numbers';
+    }
+    return null;
+  }
+
+  String? _validatePhone(String? value) {
+    if (value == null || value.isEmpty) return 'Phone is required';
+    final pattern = RegExp(r'^\+?[0-9]{10,15}$');
+    if (!pattern.hasMatch(value)) return 'Enter a valid phone number';
+    return null;
+  }
+
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() {
@@ -40,21 +64,28 @@ class _AuthPageState extends State<AuthPage> {
     if (isLogin) {
       final result = await ApiService.login(email, password);
       if (result['success']) {
-        final prefs = await SharedPreferences.getInstance();
-        final username = (result['username'] ?? email).toString();
-        await prefs.setString('user', username);
+        if (result['is_active'] == "1") {
+          final prefs = await SharedPreferences.getInstance();
+          final username = (result['username'] ?? email).toString();
+          await prefs.setString('user', username);
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => HomePage(
-              username: username,
-              email: result['email'] ?? email,
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => HomePage(
+                username: username,
+                email: result['email'] ?? email,
+              ),
             ),
-          ),
-        );
+          );
+        } else {
+          _showDialog(
+            title: "Account Not Activated",
+            message: "Please activate your account first. Check your email.",
+          );
+        }
       } else {
-        setState(() => _message = result['message']);
+        setState(() => _message = _parseError(result['message']));
       }
     } else {
       final username = _username.text.trim();
@@ -81,24 +112,58 @@ class _AuthPageState extends State<AuthPage> {
       );
 
       if (result['success']) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('user', username);
-
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (_) => HomePage(
-              username: username,
-              email: email,
-            ),
-          ),
+        _showDialog(
+          title: "Registration Successful",
+          message: "Please check your email to activate your account before logging in.",
+          onConfirm: () {
+            setState(() {
+              isLogin = true;
+              _formKey.currentState?.reset();
+              _username.clear();
+              _email.clear();
+              _password.clear();
+              _confirmPassword.clear();
+              _company.clear();
+              _industry.clear();
+              _phone.clear();
+            });
+          },
         );
       } else {
-        setState(() => _message = result['message']);
+        setState(() => _message = _parseError(result['message']));
       }
     }
 
     setState(() => _isLoading = false);
+  }
+
+  void _showDialog({
+    required String title,
+    required String message,
+    VoidCallback? onConfirm,
+  }) {
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(title),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              if (onConfirm != null) onConfirm();
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _parseError(String message) {
+    if (message.contains('Duplicate')) return 'Email already exists.';
+    if (message.contains('Invalid')) return 'Invalid credentials.';
+    return message.isNotEmpty ? message : 'Something went wrong. Please try again.';
   }
 
   @override
@@ -121,7 +186,6 @@ class _AuthPageState extends State<AuthPage> {
           builder: (context, constraints) {
             return Column(
               children: [
-                // Scrollable form content
                 Expanded(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -152,59 +216,58 @@ class _AuthPageState extends State<AuthPage> {
                               if (!isLogin)
                                 TextFormField(
                                   controller: _username,
+                                  maxLength: 100,
                                   decoration: const InputDecoration(
                                     labelText: 'Username',
                                     prefixIcon: Icon(Icons.person),
                                   ),
-                                  validator: (value) => value == null || value.isEmpty
-                                      ? 'Required'
-                                      : null,
+                                  validator: (value) =>
+                                      value == null || value.isEmpty ? 'Username required' : null,
                                 ),
                               TextFormField(
                                 controller: _email,
+                                maxLength: 100,
                                 decoration: const InputDecoration(
                                   labelText: 'Email',
                                   prefixIcon: Icon(Icons.email),
                                 ),
-                                validator: (value) => value == null || value.isEmpty
-                                    ? 'Required'
-                                    : null,
+                                validator: _validateEmail,
                               ),
                               if (!isLogin) ...[
                                 TextFormField(
                                   controller: _company,
+                                  maxLength: 100,
                                   decoration: const InputDecoration(
                                     labelText: 'Company',
                                     prefixIcon: Icon(Icons.business),
                                   ),
-                                  validator: (value) => value == null || value.isEmpty
-                                      ? 'Required'
-                                      : null,
+                                  validator: (value) =>
+                                      value == null || value.isEmpty ? 'Company required' : null,
                                 ),
                                 TextFormField(
                                   controller: _industry,
+                                  maxLength: 100,
                                   decoration: const InputDecoration(
                                     labelText: 'Industry',
                                     prefixIcon: Icon(Icons.work),
                                   ),
-                                  validator: (value) => value == null || value.isEmpty
-                                      ? 'Required'
-                                      : null,
+                                  validator: (value) =>
+                                      value == null || value.isEmpty ? 'Industry required' : null,
                                 ),
                                 TextFormField(
                                   controller: _phone,
+                                  maxLength: 15,
                                   decoration: const InputDecoration(
                                     labelText: 'Phone Number',
                                     prefixIcon: Icon(Icons.phone),
                                   ),
-                                  validator: (value) => value == null || value.isEmpty
-                                      ? 'Required'
-                                      : null,
+                                  validator: _validatePhone,
                                 ),
                               ],
                               TextFormField(
                                 controller: _password,
                                 obscureText: _obscurePassword,
+                                maxLength: 50,
                                 decoration: InputDecoration(
                                   labelText: 'Password',
                                   prefixIcon: const Icon(Icons.lock),
@@ -212,13 +275,11 @@ class _AuthPageState extends State<AuthPage> {
                                     icon: Icon(_obscurePassword
                                         ? Icons.visibility_off
                                         : Icons.visibility),
-                                    onPressed: () => setState(() =>
-                                        _obscurePassword = !_obscurePassword),
+                                    onPressed: () => setState(
+                                        () => _obscurePassword = !_obscurePassword),
                                   ),
                                 ),
-                                validator: (value) => value == null || value.isEmpty
-                                    ? 'Required'
-                                    : null,
+                                validator: _validatePassword,
                               ),
                               if (!isLogin)
                                 TextFormField(
@@ -228,9 +289,8 @@ class _AuthPageState extends State<AuthPage> {
                                     labelText: 'Confirm Password',
                                     prefixIcon: Icon(Icons.lock_outline),
                                   ),
-                                  validator: (value) => value == null || value.isEmpty
-                                      ? 'Required'
-                                      : null,
+                                  validator: (value) =>
+                                      value == null || value.isEmpty ? 'Please confirm password' : null,
                                 ),
                               if (isLogin)
                                 Align(
@@ -247,8 +307,7 @@ class _AuthPageState extends State<AuthPage> {
                                     ? const SizedBox(
                                         width: 20,
                                         height: 20,
-                                        child:
-                                            CircularProgressIndicator(strokeWidth: 2),
+                                        child: CircularProgressIndicator(strokeWidth: 2),
                                       )
                                     : Text(isLogin ? "Login" : "Register"),
                               ),
@@ -277,8 +336,6 @@ class _AuthPageState extends State<AuthPage> {
                     ),
                   ),
                 ),
-
-                // Sticky Footer at Bottom (full width, no border)
                 Image.asset(
                   'assets/footer.png',
                   width: double.infinity,

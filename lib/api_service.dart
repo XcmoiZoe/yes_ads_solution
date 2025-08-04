@@ -2,10 +2,11 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiService {
-  static const String _baseUrl = "http://artbiglobalph.com/api/login_register.php";
+  static const String _baseUrl = "https://artbiglobalph.com/api/login_register.php";
   static const Duration _timeout = Duration(seconds: 30);
 
   /// LOGIN
+  /// Returns user data and is_active status.
   static Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       final response = await http.post(
@@ -21,48 +22,34 @@ class ApiService {
         }),
       ).timeout(_timeout);
 
-      // Debug logging
       print('Login Response Status: ${response.statusCode}');
       print('Login Response Body: ${response.body}');
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        if (data['success'] == true) {
-          return {
-            "success": true,
-            "user_id": data['user_id']?.toString() ?? "",
-            "username": data['username']?.toString() ?? email,
-            "email": data['email']?.toString() ?? "",
-            "company": data['company']?.toString() ?? "",
-            "industry": data['industry']?.toString() ?? "",
-            "phone_number": data['phone_number']?.toString() ?? "",
-          };
-        } else {
-          return {
-            "success": false,
-            "message": data['message']?.toString() ?? "Login failed. Please try again."
-          };
-        }
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['success'] == true) {
+        return {
+          "success": true,
+          "user_id": data['user_id']?.toString() ?? "",
+          "username": data['username']?.toString() ?? "",
+          "email": data['email']?.toString() ?? "",
+          "company": data['company']?.toString() ?? "",
+          "industry": data['industry']?.toString() ?? "",
+          "phone_number": data['phone_number']?.toString() ?? "",
+          "is_active": data['is_active']?.toString() ?? "0",  // "0" = not activated
+          "message": data['message']?.toString() ?? ""
+        };
       } else {
-        // Try to parse error response
-        try {
-          final errorData = jsonDecode(response.body);
-          return {
-            "success": false,
-            "message": errorData['message'] ?? "Server error: ${response.statusCode}"
-          };
-        } catch (e) {
-          return {
-            "success": false,
-            "message": "Server error: ${response.statusCode}"
-          };
-        }
+        return {
+          "success": false,
+          "message": data['message']?.toString() ?? "Login failed"
+        };
       }
     } catch (e) {
       print('Login Error: $e');
       return {
         "success": false,
-        "message": "Connection error: ${e.toString()}"
+        "message": "Login error: ${e.toString()}"
       };
     }
   }
@@ -94,43 +81,72 @@ class ApiService {
         }),
       ).timeout(_timeout);
 
-      // Debug logging
       print('Register Response Status: ${response.statusCode}');
       print('Register Response Body: ${response.body}');
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        final data = jsonDecode(response.body);
-        if (data['success'] == true) {
-          return {
-            "success": true,
-            "message": data['message']?.toString() ?? "Registration successful"
-          };
-        } else {
-          return {
-            "success": false,
-            "message": data['message']?.toString() ?? "Registration failed."
-          };
-        }
+      final data = jsonDecode(response.body);
+
+      if ((response.statusCode == 200 || response.statusCode == 201) && data['success'] == true) {
+        return {
+          "success": true,
+          "message": data['message']?.toString() ?? "Registration successful",
+          "user_id": data['user_id']?.toString() ?? "",
+        };
       } else {
-        // Try to parse error response
-        try {
-          final errorData = jsonDecode(response.body);
-          return {
-            "success": false,
-            "message": errorData['message'] ?? "Server error: ${response.statusCode}"
-          };
-        } catch (e) {
-          return {
-            "success": false,
-            "message": "Server error: ${response.statusCode}"
-          };
-        }
+        return {
+          "success": false,
+          "message": data['message']?.toString() ?? "Registration failed"
+        };
       }
     } catch (e) {
       print('Register Error: $e');
       return {
         "success": false,
-        "message": "Connection error: ${e.toString()}"
+        "message": "Register error: ${e.toString()}"
+      };
+    }
+  }
+
+  /// ACTIVATE ACCOUNT
+  static Future<Map<String, dynamic>> activateAccount({
+    required String email,
+    required String activationCode,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse(_baseUrl),
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+        },
+        body: jsonEncode({
+          "action": "activate",
+          "email": email.trim(),
+          "activation_code": activationCode.trim(),
+        }),
+      ).timeout(_timeout);
+
+      print('Activate Response Status: ${response.statusCode}');
+      print('Activate Response Body: ${response.body}');
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 && data['success'] == true) {
+        return {
+          "success": true,
+          "message": data['message']?.toString() ?? "Account activated"
+        };
+      } else {
+        return {
+          "success": false,
+          "message": data['message']?.toString() ?? "Activation failed"
+        };
+      }
+    } catch (e) {
+      print('Activate Error: $e');
+      return {
+        "success": false,
+        "message": "Activation error: ${e.toString()}"
       };
     }
   }
