@@ -77,12 +77,7 @@ class _NotifPageState extends State<NotifPage> {
           );
         },
       ),
-      bottomNavigationBar: CustomBottomNav(
-  currentIndex: widget.currentIndex,
-  username: widget.username,
-  email: widget.email, 
-  parentContext: context,
-),
+      
 
     );
   }

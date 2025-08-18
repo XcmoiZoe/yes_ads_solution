@@ -163,12 +163,7 @@ class TransactionPage extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: CustomBottomNav(
-        currentIndex: currentIndex,
-        username: username,
-        email: email, // ✅ Fix: pass email here
-        parentContext: context,
-      ),
+      
     );
   }
 }

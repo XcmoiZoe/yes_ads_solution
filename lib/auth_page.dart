@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:yes_ads_solution/main_page.dart';
 import 'api_service.dart';
-import 'home_page.dart';
+import 'main_page.dart';
 
 class AuthPage extends StatefulWidget {
   const AuthPage({super.key});
@@ -72,7 +73,7 @@ class _AuthPageState extends State<AuthPage> {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (_) => HomePage(
+              builder: (_) => MainPage(
                 username: username,
                 email: result['email'] ?? email,
               ),

@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'welcome_page.dart';
 import 'auth_page.dart';
 import 'home_page.dart';
-
+import 'main_page.dart';
 class SplashPage extends StatefulWidget {
   @override
   _SplashPageState createState() => _SplashPageState();
@@ -29,7 +29,7 @@ Future<void> _checkAuthStatus() async {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => HomePage(
+        builder: (_) => MainPage(
           username: username,
           email: email, // ✅ pass email
         ),

@@ -4,19 +4,15 @@ import 'package:fl_chart/fl_chart.dart';
 import 'add_ad_page.dart';
 import 'auth_page.dart';
 import 'list_of_ads.dart';
-import 'transaction.dart';
-import 'customer_support_page.dart';
-import 'notif_page.dart';
-import 'profile.dart';
-import 'custom_bottom_nav.dart';
+
 class HomePage extends StatefulWidget {
   final String username;
-  final String email; // 👈 Add this
+  final String email; 
 
   const HomePage({
     super.key,
     required this.username,
-    required this.email, // 👈 Add this
+    required this.email, 
   });
 
   @override
@@ -330,12 +326,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
 
- bottomNavigationBar: CustomBottomNav(
-  currentIndex: _selectedIndex,
-  username: widget.username,
-  email: widget.email, // 👈 Add this
-  parentContext: context,
-),
 
 
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'splash_page.dart'; // Ensure this file exists
+import 'main_page.dart';
 
 void main() {
   runApp(const YesAdsSolutionApp());

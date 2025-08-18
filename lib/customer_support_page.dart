@@ -128,12 +128,7 @@ class _CustomerSupportPageState extends State<CustomerSupportPage> {
           ),
         ],
       ),
-      bottomNavigationBar: CustomBottomNav(
-        currentIndex: widget.currentIndex,
-        username: widget.username,
-        email: widget.email,
-        parentContext: context,
-      ),
+     
     );
   }
 }
