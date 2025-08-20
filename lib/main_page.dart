@@ -8,7 +8,7 @@ import 'transaction.dart';
 import 'notif_page.dart';
 
 class MainPage extends StatefulWidget {
-  final int? userId;
+  final String? userId;
   final String? username;
   final String? email;
 
@@ -28,12 +28,34 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     super.initState();
     _pages = [
-      CustomerSupportPage(username: widget.username ?? "", email: widget.email ?? ""),
-      TransactionPage(username: widget.username ?? "", email: widget.email ?? ""),
-      HomePage(username: widget.username ?? "", email: widget.email ?? ""),
-      NotifPage(username: widget.username ?? "", email: widget.email ?? ""),
-      ProfilePage(username: widget.username ?? "", email: widget.email ?? ""),
-    ];
+  CustomerSupportPage(
+    userId: widget.userId ?? "",
+    username: widget.username ?? "",
+    email: widget.email ?? "",
+  ),
+  TransactionPage(
+    userId: widget.userId ?? "",
+    username: widget.username ?? "",
+    email: widget.email ?? "",
+  ),
+  HomePage(
+    userId: widget.userId ?? "",
+    username: widget.username ?? "",
+    email: widget.email ?? "",
+  ),
+  NotifPage(
+    userId: widget.userId ?? "",
+    username: widget.username ?? "",
+    email: widget.email ?? "",
+  ),
+  ProfilePage(
+    userId: widget.userId ?? "",
+    username: widget.username ?? "",
+    email: widget.email ?? "",
+  ),
+];
+
+
   }
 
   void _onItemTapped(int index) {

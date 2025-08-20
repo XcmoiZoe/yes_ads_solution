@@ -4,10 +4,12 @@ import 'auth_page.dart';
 
 class ProfilePage extends StatelessWidget {
   final String username;
+  final String userId; 
   final String email;
 
-  const ProfilePage({
+  ProfilePage({
     super.key,
+    required this.userId,
     required this.username,
     required this.email,
   });

@@ -3,15 +3,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'custom_bottom_nav.dart';
 
 class NotifPage extends StatefulWidget {
- final String username;
-  final int currentIndex;
+  final String userId;
+  final String username;
   final String email;
 
-  const NotifPage({
+   NotifPage({
     super.key,
+    required this.userId,
     required this.username,
-     required this.email,
-    this.currentIndex = 3,
+    required this.email,
   });
   @override
   State<NotifPage> createState() => _NotifPageState();

@@ -3,19 +3,19 @@ import 'package:google_fonts/google_fonts.dart';
 import 'custom_bottom_nav.dart';
 
 class CustomerSupportPage extends StatefulWidget {
+ final String userId;
   final String username;
   final String email;
-  final int currentIndex;
 
-  const CustomerSupportPage({
-    super.key,
+   CustomerSupportPage({
+   super.key,
+    required this.userId,
     required this.username,
     required this.email,
-    this.currentIndex = 0,
   });
 
   @override
-  State<CustomerSupportPage> createState() => _CustomerSupportPageState();
+    State<CustomerSupportPage> createState() => _CustomerSupportPageState();
 }
 
 class _CustomerSupportPageState extends State<CustomerSupportPage> {

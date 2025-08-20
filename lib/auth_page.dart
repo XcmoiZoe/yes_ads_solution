@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:yes_ads_solution/main_page.dart';
-import 'api_service.dart';
+import 'services/api_service.dart';
 import 'main_page.dart';
 
 class AuthPage extends StatefulWidget {
@@ -63,32 +63,37 @@ class _AuthPageState extends State<AuthPage> {
     final password = _password.text.trim();
 
     if (isLogin) {
-      final result = await ApiService.login(email, password);
-      if (result['success']) {
-        if (result['is_active'] == "1") {
-          final prefs = await SharedPreferences.getInstance();
-          final username = (result['username'] ?? email).toString();
-          await prefs.setString('user', username);
+  final result = await ApiService.login(email, password);
+  if (result['success']) {
+    if (result['is_active'] == "1") {
+      final prefs = await SharedPreferences.getInstance();
+      final username = (result['username'] ?? email).toString();
 
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (_) => MainPage(
-                username: username,
-                email: result['email'] ?? email,
-              ),
-            ),
-          );
-        } else {
-          _showDialog(
-            title: "Account Not Activated",
-            message: "Please activate your account first. Check your email.",
-          );
-        }
-      } else {
-        setState(() => _message = _parseError(result['message']));
-      }
+      // Save username in SharedPreferences if needed
+      await prefs.setString('user', username);
+
+      // Navigate to MainPage/HomePage with userId, username, and email
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => MainPage(
+            userId: result['user_id'] ?? "",
+            username: username,
+            email: result['email'] ?? email,
+          ),
+        ),
+      );
     } else {
+      _showDialog(
+        title: "Account Not Activated",
+        message: "Please activate your account first. Check your email.",
+      );
+    }
+  } else {
+    setState(() => _message = _parseError(result['message']));
+  }
+}
+ else {
       final username = _username.text.trim();
       final company = _company.text.trim();
       final industry = _industry.text.trim();

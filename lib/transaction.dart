@@ -4,11 +4,14 @@ import 'custom_bottom_nav.dart';
 
 class TransactionPage extends StatelessWidget {
   final String username;
+  final String userId;
   final String email; // ✅ Add this
+  
   final int currentIndex;
 
-  const TransactionPage({
+   TransactionPage({
     super.key,
+    required this.userId,
     required this.username,
     required this.email, // ✅ Add this
     this.currentIndex = 1,
